@@ -41,7 +41,7 @@ nav button.active{color:var(--blue);font-weight:bold;border-top:3px solid var(--
 nav.bottom-dock{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));height:78px;padding:7px;display:flex;align-items:stretch;justify-content:flex-start;gap:5px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border:1px solid #ffffff22;border-radius:28px;background:rgba(24,39,58,.88);box-shadow:0 12px 34px #07111f55,inset 0 1px 0 #ffffff20;backdrop-filter:blur(22px) saturate(155%);-webkit-backdrop-filter:blur(22px) saturate(155%)}
 nav.bottom-dock button{min-width:68px;flex:0 0 68px;max-width:68px;padding:5px 4px;border:0;border-radius:22px;background:transparent;color:#f2f5fa;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;white-space:normal;font-size:calc(11px * var(--font-scale,1));line-height:1.25;transition:background .2s,color .2s,transform .2s}
 nav.bottom-dock button .nav-icon{font-family:Arial,sans-serif;font-size:25px;line-height:1.1;font-weight:400;color:inherit}
-nav.bottom-dock button .nav-label{font-size:inherit;white-space:nowrap}
+nav.bottom-dock button .nav-label{font-size:inherit;white-space:normal;text-align:center;line-height:1.1;overflow-wrap:anywhere}
 nav.bottom-dock button.active{border:0;border-radius:22px;background:color-mix(in srgb,var(--blue) 30%,#20344b);color:var(--blue);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blue) 22%,transparent)}
 @media(max-width:390px){nav.bottom-dock{left:7px;right:7px;gap:2px;padding:5px;height:73px}nav.bottom-dock button{font-size:calc(9px * var(--font-scale,1));padding:4px 2px}nav.bottom-dock button .nav-icon{font-size:22px}}
 main{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
@@ -80,13 +80,6 @@ summary{cursor:pointer;font-weight:bold}
       <button class="secondary" onclick="page('settings')">⚙️ تنظیمات</button>
       <button class="secondary" onclick="page('about')">ℹ️ دربارهٔ برنامه</button>
     </div>
-  <div class="card">
-    <h2>🔍 بررسی نوع عدد</h2>
-    <label for="homeNumberTypeInput">عدد صحیح مثبت</label>
-    <input id="homeNumberTypeInput" type="text" inputmode="none" value="35">
-    <div class="actions"><button onclick="inspectHomeNumberType()">بررسی نوع عدد</button></div>
-    <div id="homeNumberTypeResult" class="result" aria-live="polite">عدد را وارد کن.</div>
-  </div>
   </div>
 </section>
 
@@ -395,11 +388,6 @@ function positiveDivisors(n){
  }
  return out.sort((a,b)=>a-b);
 }
-function inspectHomeNumberType(){
- $('numberTypeInput').value=$('homeNumberTypeInput').value;
- inspectNumberType();
- $('homeNumberTypeResult').replaceChildren(...Array.from($('numberTypeResult').childNodes).map(x=>x.cloneNode(true)));
-}
 function calculateDivisorSums(){
  const raw=$('sumDivisorsInput').value.trim(),n=Number(raw),box=$('sumDivisorsResult');
  if(!Number.isSafeInteger(n)||n<1||n>1000000000000){box.textContent='یک عدد صحیح مثبت حداکثر تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ وارد کن.';return}
@@ -486,7 +474,7 @@ function setCalcMode(scientific){
  $('normalMode').classList.toggle('secondary',scientific);
  const box=$('scienceKeys');box.replaceChildren();box.hidden=!scientific;
  if(scientific){
-  const extras=[['sin(','sin'],['cos(','cos'],['tan(','tan'],['sqrt(','√'],['log10(','log'],['log(','ln'],['^','xʸ'],['!','n!'],['π','π'],['abs(','|x|'],['(', '('],[')',')']];
+  const extras=[['sin(','sin'],['cos(','cos'],['tan(','tan'],['sqrt(','√'],['log10(','log'],['log(','ln'],['^','xʸ'],['!','n!'],['π','π'],['abs(','|x|']];
   extras.forEach(([v,t])=>{const b=document.createElement('button');b.textContent=t;if(v==='^'||v==='!')b.className='operator';b.onclick=()=>appendCalc(v);box.append(b)});
  }
 }
