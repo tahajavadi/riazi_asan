@@ -69,6 +69,7 @@ summary{cursor:pointer;font-weight:bold}
       <button onclick="page('sieve')">🔢 غربال اراتستن</button>
       <button class="secondary" onclick="page('rank')">🎯 پیدا کردن عدد از روی رتبه</button>
       <button class="secondary" onclick="page('checkNumber')">🔎 بررسی عدد</button>
+      <button class="secondary" onclick="page('numberType')">🔍 نوع عدد و شمارنده‌ها</button>
       <button class="secondary" onclick="page('factor')">🌳 درخت تجزیه</button>
       <button class="secondary" onclick="page('gcdOnly')">➗ ب.م.م</button>
       <button class="secondary" onclick="page('lcmOnly')">✖️ ک.م.م</button>
@@ -119,6 +120,20 @@ summary{cursor:pointer;font-weight:bold}
     <label for="checkTarget">عدد موردنظر</label><input id="checkTarget" type="number" value="35">
     <div class="actions"><button onclick="inspectNumber()">بررسی عدد</button></div>
     <div id="checkResult" class="result"></div>
+  </div>
+</section>
+
+
+<section class="page" id="numberType">
+  <div class="card">
+    <h2>نوع عدد و شمارنده‌ها</h2>
+    <p class="note">یک عدد صحیح مثبت وارد کن تا اول یا مرکب بودن، شمارنده‌ها و تعداد آن‌ها نمایش داده شود.</p>
+    <label for="numberTypeInput">عدد موردنظر</label>
+    <input id="numberTypeInput" type="number" min="1" step="1" value="35">
+    <div class="actions">
+      <button onclick="inspectNumberType()">بررسی نوع عدد</button>
+    </div>
+    <div id="numberTypeResult" class="result" aria-live="polite"></div>
   </div>
 </section>
 
@@ -204,6 +219,7 @@ summary{cursor:pointer;font-weight:bold}
   <button data-page="sieve" onclick="page('sieve')"><span class="nav-icon">▦</span><span class="nav-label">غربال</span></button>
   <button data-page="rank" onclick="page('rank')"><span class="nav-icon">#</span><span class="nav-label">رتبه</span></button>
   <button data-page="checkNumber" onclick="page('checkNumber')"><span class="nav-icon">⌕</span><span class="nav-label">بررسی عدد</span></button>
+  <button data-page="numberType" onclick="page('numberType')"><span class="nav-icon">√</span><span class="nav-label">نوع عدد</span></button>
   
   <button data-page="gcdOnly" onclick="page('gcdOnly')"><span class="nav-icon">÷</span><span class="nav-label">ب.م.م</span></button>
   <button data-page="lcmOnly" onclick="page('lcmOnly')"><span class="nav-icon">×</span><span class="nav-label">ک.م.م</span></button>
@@ -297,6 +313,52 @@ function renderStages(){
  s.textContent=`مرحلهٔ ${st.p}؛ ${st.nums.length} عدد تازه‌خط‌خورده`;p.textContent=st.nums.join('، ');d.append(s,p);box.append(d)});
 }
 function rankState(){try{return compute(Number($('rs').value),Number($('re').value))}catch(e){$('rankResult').textContent=e.message;return null}}
+
+function inspectNumberType(){
+ const input=$('numberTypeInput');
+ const box=$('numberTypeResult');
+ const n=Number(input.value);
+
+ if(!Number.isSafeInteger(n)||n<1){
+  box.textContent='لطفاً یک عدد صحیح مثبت وارد کن.';
+  return;
+ }
+ if(n>1000000000000){
+  box.textContent='برای حفظ سرعت برنامه، عدد باید حداکثر ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ باشد.';
+  return;
+ }
+
+ const divisors=[];
+ for(let i=1;i<=Math.floor(Math.sqrt(n));i++){
+  if(n%i===0){
+   divisors.push(i);
+   const other=n/i;
+   if(other!==i)divisors.push(other);
+  }
+ }
+ divisors.sort((a,b)=>a-b);
+
+ let kind;
+ if(n===1) kind='عدد ۱ نه اول است و نه مرکب.';
+ else if(divisors.length===2) kind=`${n} عدد اول است.`;
+ else kind=`${n} عدد مرکب است.`;
+
+ const heading=document.createElement('p');
+ heading.textContent=kind;
+
+ const count=document.createElement('p');
+ count.textContent=`تعداد شمارنده‌های مثبت: ${divisors.length}`;
+
+ const label=document.createElement('p');
+ label.textContent='شمارنده‌های مثبت:';
+
+ const list=document.createElement('p');
+ list.textContent=divisors.join('، ');
+
+ box.replaceChildren(heading,count,label,list);
+ addHistory('نوع عدد',`${n}: ${kind} تعداد شمارنده‌ها: ${divisors.length}؛ شمارنده‌ها: ${divisors.join('، ')}`);
+}
+
 function inspectNumber(){
  let s;try{s=compute(Number($('cs').value),Number($('ce').value))}catch(e){$('checkResult').textContent=e.message;return}
  const n=Number($('checkTarget').value);

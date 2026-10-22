@@ -19,13 +19,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        window.setStatusBarColor(Color.rgb(248, 249, 252));
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
         window.setNavigationBarColor(Color.BLACK);
-        window.getDecorView().setSystemUiVisibility(0);
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            window.setStatusBarColor(Color.rgb(248, 249, 252));
-        }
 
         webView = new WebView(this);
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -36,6 +34,11 @@ public class MainActivity extends Activity {
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(false);
         settings.setSupportZoom(false);
+        settings.setBuiltInZoomControls(false);
+        settings.setDisplayZoomControls(false);
+
+        // جلوگیری از بزرگ‌نمایی با دو انگشت
+        webView.setOnTouchListener((view, event) -> event.getPointerCount() > 1);
 
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient());
