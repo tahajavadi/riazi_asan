@@ -1,6 +1,4 @@
-plugins {
-    id 'com.android.application'
-}
+plugins { id 'com.android.application' }
 
 def versionFile = rootProject.file("app-version.properties")
 def versionProps = new Properties()
@@ -22,18 +20,5 @@ android {
         targetSdk 35
         versionCode versionCodeValue
         versionName versionNameValue
-    }
-
-    buildTypes {
-        debug {
-            minifyEnabled false
-        }
-
-        release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                          'proguard-rules.pro'
-        }
     }
 }
