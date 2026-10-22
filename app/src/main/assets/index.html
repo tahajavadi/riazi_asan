@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1769d2">
+<title>ریاضیِ آسان</title>
+<style>
+:root{--bg:#f2f6fc;--card:#fff;--text:#172b4d;--muted:#64748b;--blue:#1769d2;--line:#dce5f1;--prime:#d9fbe5;--cross:#ffe1e1;--tree-line:var(--blue)}
+body.dark{--bg:#101827;--card:#1c293b;--text:#edf4ff;--muted:#a8b7cc;--blue:#69a5ff;--line:#34445a;--prime:#174832;--cross:#542d36;--tree-line:var(--blue)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.8}
+header{background:var(--blue);color:white;padding:18px 16px;border-radius:0 0 24px 24px}
+header h1{margin:0;font-size:calc(25px * var(--font-scale, 1))}
+main{padding:18px;max-width:100%;width:100%;margin:0 auto;padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+body{font-size:calc(16px * var(--font-scale, 1))} body.no-motion *,body.no-motion *::before,body.no-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media(min-width:900px){header{padding:24px 4vw}header h1{font-size:calc(32px * var(--font-scale, 1))}main{padding:24px 4vw calc(110px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}main>.page{min-width:0}main>.page.active{grid-column:1/-1}main>.page.active .card{width:100%}.card{padding:24px}h2{font-size:calc(22px * var(--font-scale, 1))}.numbers{grid-template-columns:repeat(12,minmax(0,1fr))}nav{justify-content:center;overflow-x:auto;padding-bottom:env(safe-area-inset-bottom)}nav button{max-width:180px;font-size:calc(14px * var(--font-scale, 1));padding:12px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 3px 12px #1020400b}
+h2{font-size:calc(19px * var(--font-scale, 1));margin:0 0 12px}
+label{display:block;font-size:calc(14px * var(--font-scale, 1));margin:8px 0 4px}
+input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font-size:calc(16px * var(--font-scale, 1))}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{border:0;border-radius:11px;padding:11px 14px;font-size:calc(14px * var(--font-scale, 1));cursor:pointer;background:var(--blue);color:white}
+button.secondary{background:var(--bg);color:var(--text);border:1px solid var(--line)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.result{background:var(--bg);border-radius:12px;padding:12px;margin-top:12px;overflow-wrap:anywhere}
+.numbers{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:12px}
+.num{padding:7px 1px;border:1px solid var(--line);background:var(--card);color:var(--text);min-width:0}
+.num.prime{background:var(--prime);border-color:#47a56a}
+.num.crossed{background:var(--cross);border-color:#d97777}
+.note{color:var(--muted);font-size:calc(13px * var(--font-scale, 1))}
+.page{display:none}.page.active{display:block;animation:page-enter .24s ease-out both}
+@keyframes page-enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+body.no-motion .page.active{animation:none!important}
+header[hidden]{display:none!important}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;overflow-x:auto;z-index:5;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -8px 24px #1020400b;backdrop-filter:blur(12px)}
+nav button{background:transparent;color:var(--muted);border-radius:0;min-width:92px;flex:1;padding:12px 9px;font-size:calc(14px * var(--font-scale, 1));white-space:nowrap}
+nav button.active{color:var(--blue);font-weight:bold;border-top:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent);border-radius:14px 14px 0 0}
+/* Floating glass dock, inspired by the supplied reference image. */
+nav.bottom-dock{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));height:78px;padding:7px;display:flex;align-items:stretch;justify-content:flex-start;gap:5px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border:1px solid #ffffff22;border-radius:28px;background:rgba(24,39,58,.88);box-shadow:0 12px 34px #07111f55,inset 0 1px 0 #ffffff20;backdrop-filter:blur(22px) saturate(155%);-webkit-backdrop-filter:blur(22px) saturate(155%)}
+nav.bottom-dock button{min-width:68px;flex:0 0 68px;max-width:68px;padding:5px 4px;border:0;border-radius:22px;background:transparent;color:#f2f5fa;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;white-space:normal;font-size:calc(11px * var(--font-scale,1));line-height:1.25;transition:background .2s,color .2s,transform .2s}
+nav.bottom-dock button .nav-icon{font-family:Arial,sans-serif;font-size:25px;line-height:1.1;font-weight:400;color:inherit}
+nav.bottom-dock button .nav-label{font-size:inherit;white-space:nowrap}
+nav.bottom-dock button.active{border:0;border-radius:22px;background:color-mix(in srgb,var(--blue) 30%,#20344b);color:var(--blue);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blue) 22%,transparent)}
+@media(max-width:390px){nav.bottom-dock{left:7px;right:7px;gap:2px;padding:5px;height:73px}nav.bottom-dock button{font-size:calc(9px * var(--font-scale,1));padding:4px 2px}nav.bottom-dock button .nav-icon{font-size:22px}}
+main{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+.pill{display:inline-block;padding:5px 10px;margin:4px;background:var(--prime);border-radius:9px}
+details{border:1px solid var(--line);padding:10px;border-radius:10px;margin:8px 0}
+summary{cursor:pointer;font-weight:bold}
+.toggle{display:flex;align-items:center;gap:10px;margin:12px 0}
+.toggle input{width:auto}
+@media(min-width:520px) and (max-width:899px){.numbers{grid-template-columns:repeat(8,minmax(0,1fr))}}
+.factor-tree{display:block;width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding:20px 8px;text-align:center}.tree-node{display:flex;flex-direction:column;align-items:center;gap:0;min-width:0;position:relative}.tree-value{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;padding:7px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card);font-weight:bold;box-shadow:0 2px 7px #10204010;position:relative;z-index:1}.tree-children{display:flex;justify-content:center;align-items:flex-start;gap:clamp(8px,3vw,28px);position:relative;padding-top:28px;width:max-content;min-width:100%;margin:0 auto}.tree-children:before{content:"";position:absolute;top:13px;left:25%;right:25%;border-top:3px solid var(--tree-line);border-radius:3px}.tree-children>.tree-node{flex:0 0 auto;min-width:48px}.tree-children>.tree-node:before{content:"";position:absolute;top:-15px;height:15px;border-right:3px solid var(--tree-line)}.tree-leaf .tree-value{background:var(--prime);border-color:#47a56a}.prime-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.prime-chip{background:var(--prime);border:1px solid #47a56a;border-radius:10px;padding:5px 10px;font-weight:bold}.home-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}.home-tools button{min-height:58px;font-size:calc(15px * var(--font-scale, 1))}.home-tools .secondary{background:var(--bg)}.settings-row{display:grid;grid-template-columns:1fr;gap:6px;margin:12px 0}.settings-row select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}.about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.about-item{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px}.copy-field{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.copy-field bdi{overflow-wrap:anywhere}
+.calc-shell{max-width:520px;margin:auto}.calc-display{height:142px;min-height:142px;max-height:142px;overflow:hidden;background:#101827;color:#f8fafc;border-radius:20px;padding:12px 16px;display:flex;flex-direction:column;justify-content:flex-start;text-align:left;direction:ltr;font-variant-numeric:tabular-nums;box-shadow:inset 0 2px 8px #0004}.calc-expression{height:32px;min-height:32px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:22px;color:#cbd5e1}.calc-gap{height:28px;min-height:28px}.calc-equals{height:22px;min-height:22px;font-size:16px;color:#cbd5e1}.calc-answer{height:38px;min-height:38px;font-size:28px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.calc-keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:12px}.calc-keys button{min-height:54px;border-radius:16px;font-size:21px;font-weight:600;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--line);touch-action:manipulation}.calc-keys button.operator{background:#f28c28;color:white;border-color:#f28c28}.calc-keys button.utility{background:var(--blue);color:white;border-color:var(--blue)}.calc-keys button.wide{grid-column:span 2}.calc-mode{display:flex;gap:8px;margin:10px 0}.calc-mode button{flex:1}.science-keys{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:10px}.science-keys button{min-width:0;min-height:42px;padding:6px 2px;border-radius:12px;background:var(--bg);color:var(--text);border:1px solid var(--line);font-size:15px}.science-keys button.operator{background:#f28c28;color:white;border-color:#f28c28}.calc-keys button{min-width:0;overflow:hidden}.calc-keys button.operator{background:#f28c28;color:white;border-color:#f28c28}.calc-keys button.utility{background:var(--blue);color:white;border-color:var(--blue)}
+</style>
+</head>
+<body>
+<header id="topHeader">
+  <h1>ریاضیِ آسان</h1>
+</header>
+<main>
+<section class="page active" id="home">
+  <div class="card">
+    <h2>به ریاضیِ آسان خوش آمدی</h2>
+    <p>یک ابزار فارسی برای محاسبات و یادگیری ریاضی.</p>
+    <h2>دسترسی سریع به بخش‌ها</h2>
+    <div class="home-tools">
+      <button onclick="page('sieve')">🔢 غربال اراتستن</button>
+      <button class="secondary" onclick="page('rank')">🎯 پیدا کردن عدد از روی رتبه</button>
+      <button class="secondary" onclick="page('checkNumber')">🔎 بررسی عدد</button>
+      <button class="secondary" onclick="page('factor')">🌳 درخت تجزیه</button>
+      <button class="secondary" onclick="page('gcdOnly')">➗ ب.م.م</button>
+      <button class="secondary" onclick="page('lcmOnly')">✖️ ک.م.م</button>
+      <button class="secondary" onclick="page('calculator')">🧮 ماشین‌حساب علمی</button>
+      <button class="secondary" onclick="page('history')">🕘 تاریخچه</button>
+      <button class="secondary" onclick="page('settings')">⚙️ تنظیمات</button>
+      <button class="secondary" onclick="page('about')">ℹ️ دربارهٔ برنامه</button>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="sieve">
+  <div class="card">
+    <h2>غربال اراتستن</h2>
+    <div class="grid">
+      <div><label for="start">شروع بازه</label><input id="start" type="number" value="1"></div>
+      <div><label for="end">پایان بازه</label><input id="end" type="number" value="100"></div>
+    </div>
+    <div class="actions"><button onclick="runSieve()">اجرای غربال</button></div>
+    <div id="sieveInfo" class="result">بازه را وارد کن.</div>
+    <div id="numbers" class="numbers"></div>
+    <div id="primeSection" class="result"><h3>اعداد اول</h3><p class="note">پس از اجرای غربال، اعداد اول این بازه اینجا نمایش داده می‌شوند.</p><div id="primeNumbers" class="prime-list"></div></div>
+    <div id="pager" class="actions"></div>
+    <div id="stages" class="result"></div>
+  </div>
+</section>
+
+<section class="page" id="rank">
+  <div class="card">
+    <h2>پیدا کردن عدد از روی رتبه</h2>
+    <div class="grid">
+      <div><label for="rs">شروع بازه</label><input id="rs" type="number" value="1"></div>
+      <div><label for="re">پایان بازه</label><input id="re" type="number" value="100"></div>
+    </div>
+    <label for="rankInput">رتبهٔ خط‌خوردن</label><input id="rankInput" type="number" value="10">
+    <div class="actions"><button onclick="findRank()">پیدا کردن عدد</button></div>
+    <div id="rankResult" class="result"></div>
+  </div>
+</section>
+
+<section class="page" id="checkNumber">
+  <div class="card">
+    <h2>بررسی عدد</h2>
+    <div class="grid">
+      <div><label for="cs">شروع بازه</label><input id="cs" type="number" value="1"></div>
+      <div><label for="ce">پایان بازه</label><input id="ce" type="number" value="100"></div>
+    </div>
+    <label for="checkTarget">عدد موردنظر</label><input id="checkTarget" type="number" value="35">
+    <div class="actions"><button onclick="inspectNumber()">بررسی عدد</button></div>
+    <div id="checkResult" class="result"></div>
+  </div>
+</section>
+
+<section class="page" id="gcd">
+  <div class="card">
+    <h2>ب.م.م و ک.م.م</h2>
+    <p class="note">ب.م.م بزرگ‌ترین مقسوم‌علیه مشترک و ک.م.م کوچک‌ترین مضرب مشترک دو عدد است.</p>
+    <div class="grid">
+      <div><label for="a">عدد اول</label><input id="a" type="number" value="12"></div>
+      <div><label for="b">عدد دوم</label><input id="b" type="number" value="18"></div>
+    </div>
+    <div class="actions"><button onclick="calcGcd()">محاسبه</button></div>
+    <div id="gcdResult" class="result"></div>
+  </div>
+</section>
+
+
+<section class="page" id="gcdOnly">
+  <div class="card"><h2>ب.م.م دو عدد</h2><p class="note">ب.م.م بزرگ‌ترین عدد صحیح مثبتی است که هر دو عدد بر آن بخش‌پذیرند.</p>
+  <div class="grid"><div><label for="ga">عدد اول</label><input id="ga" type="number" value="12"></div><div><label for="gb">عدد دوم</label><input id="gb" type="number" value="18"></div></div>
+  <div class="actions"><button onclick="calcGcdOnly()">محاسبهٔ ب.م.م</button></div><div id="gcdOnlyResult" class="result"></div></div>
+</section>
+<section class="page" id="lcmOnly">
+  <div class="card"><h2>ک.م.م دو عدد</h2><p class="note">ک.م.م کوچک‌ترین مضرب مثبت مشترک دو عدد است؛ اگر یکی از عددها صفر باشد، نتیجه صفر است.</p>
+  <div class="grid"><div><label for="la">عدد اول</label><input id="la" type="number" value="12"></div><div><label for="lb">عدد دوم</label><input id="lb" type="number" value="18"></div></div>
+  <div class="actions"><button onclick="calcLcmOnly()">محاسبهٔ ک.م.م</button></div><div id="lcmOnlyResult" class="result"></div></div>
+</section>
+
+<section class="page" id="factor">
+  <div class="card">
+    <h2>تجزیه به عامل‌های اول</h2>
+    <p class="note">عدد صحیح را وارد کن تا عامل‌های اول، توان‌ها و درخت تجزیه نمایش داده شود.</p>
+    <label for="factorInput">عدد موردنظر</label><input id="factorInput" type="number" value="60" step="1">
+    <div class="actions"><button onclick="factorize()">تجزیه کن</button></div>
+    <div id="factorResult" class="result"></div>
+    <h3>درخت تجزیه</h3><div id="factorTree" class="factor-tree result"></div>
+    <div id="factorDetails" class="result"></div>
+  </div>
+</section>
+
+<section class="page" id="calculator">
+  <div class="card calc-shell">
+    <h2>ماشین‌حساب</h2>
+    <div class="calc-mode"><button id="normalMode" class="secondary" onclick="setCalcMode(false)">معمولی</button><button id="scientificMode" onclick="setCalcMode(true)">علمی</button></div>
+    <div class="calc-display" aria-live="polite"><div id="calcExpression" class="calc-expression"></div><div class="calc-gap"></div><div class="calc-equals">=</div><div id="calcAnswer" class="calc-answer"></div></div>
+    <input id="calcInput" type="text" aria-label="عبارت ماشین حساب" readonly tabindex="-1" value="" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+    <div id="scienceKeys" class="science-keys" hidden></div>
+    <div id="calcKeys" class="calc-keys">
+      <button class="utility" onclick="clearCalc()">AC</button><button class="utility" onclick="backspaceCalc()">⌫</button><button class="utility" onclick="appendCalc('(')">(</button><button class="operator" onclick="appendCalc(')')">)</button>
+      <button onclick="appendCalc('7')">۷</button><button onclick="appendCalc('8')">۸</button><button onclick="appendCalc('9')">۹</button><button class="operator" onclick="appendCalc('÷')">÷</button>
+      <button onclick="appendCalc('4')">۴</button><button onclick="appendCalc('5')">۵</button><button onclick="appendCalc('6')">۶</button><button class="operator" onclick="appendCalc('×')">×</button>
+      <button onclick="appendCalc('1')">۱</button><button onclick="appendCalc('2')">۲</button><button onclick="appendCalc('3')">۳</button><button class="operator" onclick="appendCalc('−')">−</button>
+      <button onclick="appendCalc('0')">۰</button><button onclick="appendCalc('.')">.</button><button class="operator" onclick="appendCalc('+')">+</button><button class="utility" onclick="calculateExpression()">=</button>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="history">
+  <div class="card">
+    <h2>۲۰ محاسبهٔ آخر</h2>
+    <button class="secondary" onclick="clearHistory()">پاک کردن تاریخچه</button>
+    <div id="historyResult"></div>
+  </div>
+</section>
+
+<section class="page" id="settings">
+  <div class="card">
+    <h2>تنظیمات برنامه</h2>
+    <div class="actions"><button onclick="toggleTheme()">تغییر حالت روشن / تاریک</button><button class="secondary" onclick="setTheme('light')">حالت روشن</button><button class="secondary" onclick="setTheme('dark')">حالت تاریک</button></div>
+    <div class="settings-row"><label for="accentColor">رنگ اصلی برنامه</label><select id="accentColor" onchange="applySettings()"><option value="blue">آبی</option><option value="purple">بنفش</option><option value="green">سبز</option><option value="orange">نارنجی</option><option value="pink">صورتی</option></select></div>
+    <div class="settings-row"><label for="fontSize">اندازهٔ نوشته‌ها</label><select id="fontSize" onchange="applySettings()"><option value="0.9">کوچک</option><option value="1" selected>معمولی</option><option value="1.1">بزرگ</option><option value="1.2">خیلی بزرگ</option></select></div>
+    <label class="toggle"><input id="showStages" type="checkbox" checked onchange="saveSettings();runSieve()"> نمایش مراحل غربال</label>
+    <label class="toggle"><input id="showFresh" type="checkbox" checked onchange="saveSettings();runSieve()"> نمایش جداگانهٔ عددهای تازه‌خط‌خورده</label>
+    <label class="toggle"><input id="showPrimes" type="checkbox" checked onchange="saveSettings();renderPrimeList()"> نمایش بخش جداگانهٔ اعداد اول</label>
+    <label class="toggle"><input id="animations" type="checkbox" checked onchange="applySettings()"> فعال‌بودن انیمیشن‌ها</label>
+    <div class="actions"><button class="secondary" onclick="clearHistory()">پاک‌کردن تاریخچه</button><button class="secondary" onclick="resetSettings()">بازنشانی تنظیمات</button></div>
+    <p class="note">تنظیمات و تاریخچه فقط در حافظهٔ همین مرورگر ذخیره می‌شوند.</p>
+  </div>
+</section>
+
+<section class="page" id="about">
+  <div class="card">
+    <h2>دربارهٔ ریاضیِ آسان</h2>
+    <p>«ریاضیِ آسان» یک ابزار آموزشی فارسی برای تمرین محاسبات و یادگیری مفاهیم پایهٔ ریاضی است. هدف آن ارائهٔ ابزارهای ساده، خوانا و در دسترس برای دانش‌آموزان است.</p>
+    <div class="about-grid">
+      <div class="about-item"><b>قابلیت‌ها</b><p>غربال اراتستن و مراحل آن، بررسی عدد و رتبهٔ خط‌خوردن، تجزیه به عامل‌های اول و درخت تجزیه، ب.م.م و ک.م.م، تاریخچهٔ محاسبات و تنظیمات نمایشی.</p></div>
+      <div class="about-item"><b>مشخصات آموزشی</b><p>سازنده: طاها جوادی کیا</p><p>دبیر: علیرضا جوادی</p><p>مدرسه: شهید بهشتی ۲</p></div>
+      <div class="about-item"><b>ارتباط با سازنده</b><p>ایمیل: <bdi dir="ltr">tahajavadi001@gmail.com</bdi></p><p>شناسه در سروش پلاس:</p><div class="copy-field"><bdi id="contactId" dir="ltr">@O1237</bdi><button onclick="copyContact()">کپی شناسه</button></div><div class="actions"><button class="secondary" onclick="copyEmail()">کپی ایمیل</button><button class="secondary" onclick="emailContact()">ارسال ایمیل</button></div><p id="copyStatus" class="note" aria-live="polite"></p></div>
+      <div class="about-item"><b>حریم خصوصی</b><p>این نسخه برای اجرای محاسبات اصلی به اینترنت نیاز ندارد. تاریخچه و تنظیمات در فضای ذخیره‌سازی مرورگر همین دستگاه نگهداری می‌شوند.</p></div>
+    </div>
+    <p class="note">نسخهٔ آموزشی — با آرزوی یادگیری شیرین و موفقیت در ریاضی.</p>
+  </div>
+</section>
+</main>
+<nav class="bottom-dock" aria-label="پیمایش اصلی">
+  <button class="active" data-page="home" onclick="page('home')"><span class="nav-icon">⌂</span><span class="nav-label">خانه</span></button>
+  <button data-page="sieve" onclick="page('sieve')"><span class="nav-icon">▦</span><span class="nav-label">غربال</span></button>
+  <button data-page="rank" onclick="page('rank')"><span class="nav-icon">#</span><span class="nav-label">رتبه</span></button>
+  <button data-page="checkNumber" onclick="page('checkNumber')"><span class="nav-icon">⌕</span><span class="nav-label">بررسی عدد</span></button>
+  <button data-page="gcd" onclick="page('gcd')"><span class="nav-icon">±</span><span class="nav-label">ب.م.م و ک.م.م</span></button>
+  <button data-page="gcdOnly" onclick="page('gcdOnly')"><span class="nav-icon">÷</span><span class="nav-label">ب.م.م</span></button>
+  <button data-page="lcmOnly" onclick="page('lcmOnly')"><span class="nav-icon">×</span><span class="nav-label">ک.م.م</span></button>
+  <button data-page="factor" onclick="page('factor')"><span class="nav-icon">⑂</span><span class="nav-label">تجزیه</span></button>
+  <button data-page="calculator" onclick="page('calculator')"><span class="nav-icon">∑</span><span class="nav-label">ماشین‌حساب</span></button>
+  <button data-page="history" onclick="page('history')"><span class="nav-icon">◷</span><span class="nav-label">تاریخچه</span></button>
+  <button data-page="settings" onclick="page('settings')"><span class="nav-icon">⚙</span><span class="nav-label">تنظیمات</span></button>
+  <button data-page="about" onclick="page('about')"><span class="nav-icon">ⓘ</span><span class="nav-label">درباره</span></button>
+</nav>
+<script>
+const $=id=>document.getElementById(id);
+const HISTORY='riaziAsanHistory',SETTINGS='riaziAsanSettings';
+let current=null,offset=0;
+const PAGE_SIZE=300;
+
+function page(id){
+ document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===id));
+ const header=$('topHeader');if(header)header.hidden=(id!=='home');
+ document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));
+ const activeNav=document.querySelector('nav button.active');if(activeNav&&activeNav.scrollIntoView)activeNav.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});
+ window.scrollTo(0,0);
+}
+function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY)||'[]')}catch(e){return []}}
+function addHistory(title,detail){
+ const h=getHistory();h.unshift({title,detail,date:new Date().toLocaleString('fa-IR')});
+ try{localStorage.setItem(HISTORY,JSON.stringify(h.slice(0,20)))}catch(e){}
+ renderHistory();
+}
+function renderHistory(){
+ const box=$('historyResult');box.replaceChildren();const h=getHistory();
+ if(!h.length){box.textContent='هنوز محاسبه‌ای ثبت نشده است.';return}
+ h.forEach((x,i)=>{const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');
+ s.textContent=(i+1)+'. '+x.title+' — '+x.date;p.textContent=x.detail;d.append(s,p);box.append(d)});
+}
+function clearHistory(){if(confirm('تاریخچه پاک شود؟')){localStorage.removeItem(HISTORY);renderHistory()}}
+function compute(start,end){
+ if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<1||end<start)throw Error('بازه باید شامل دو عدد صحیح مثبت باشد و پایان از شروع کوچک‌تر نباشد.');
+ const len=end-start+1;
+ if(!Number.isSafeInteger(len)||len>1000000)throw Error('این بازه برای گوشی بزرگ است؛ بازه را کوچک‌تر کن یا به چند بخش تقسیم کن.');
+ const marked=new Uint8Array(len),order=[],by=new Map(),stages=[];
+ if(start<=1&&end>=1){marked[1-start]=1;order.push(1);by.set(1,'آغازین')}
+ const root=Math.floor(Math.sqrt(end));
+ // Standard sieve on the interval, marking each composite only once.
+ for(let p=2;p<=root;p++){
+   let prime=true;for(let d=2;d*d<=p;d++)if(p%d===0){prime=false;break}
+   if(!prime)continue;
+   const fresh=[];let m=Math.max(p*p,Math.ceil(start/p)*p);
+   for(;m<=end;m+=p){const i=m-start;if(i>=0&&!marked[i]){marked[i]=1;order.push(m);by.set(m,p);fresh.push(m)}}
+   if(fresh.length)stages.push({p,nums:fresh});
+ }
+ const primes=[];for(let n=Math.max(2,start);n<=end;n++)if(!marked[n-start])primes.push(n);
+ return {start,end,order,by,stages,primes,rank:new Map(order.map((n,i)=>[n,i+1])),primeSet:new Set(primes)};
+}
+function runSieve(){
+ try{
+  current=compute(Number($('start').value),Number($('end').value));offset=0;
+  $('sieveInfo').textContent=`تعداد اعداد اول: ${current.primes.length} — تعداد خط‌خورده‌ها: ${current.order.length}`;
+  renderNumbers();renderStages();renderPrimeList();
+  $('rs').value=current.start;$('re').value=current.end;
+  addHistory('غربال اراتستن',`بازه ${current.start} تا ${current.end}؛ ${current.primes.length} عدد اول؛ ${current.order.length} عدد خط‌خورده.`);
+ }catch(e){$('sieveInfo').textContent=e.message}
+}
+function renderNumbers(){
+ const box=$('numbers');box.replaceChildren();
+ const end=Math.min(current.end,current.start+offset+PAGE_SIZE-1);
+ for(let n=current.start+offset;n<=end;n++){
+  const b=document.createElement('button');b.className='num';
+  b.classList.add(current.primeSet.has(n)?'prime':'crossed');b.textContent=n;
+  b.title=current.rank.has(n)?'رتبهٔ خط‌خوردن: '+current.rank.get(n):'عدد اول';
+  b.onclick=()=>{$('target').value=n;inspect()};box.append(b);
+ }
+ const pg=$('pager');pg.replaceChildren();
+ const prev=document.createElement('button');prev.className='secondary';prev.textContent='صفحهٔ قبل';prev.disabled=offset===0;prev.onclick=()=>{offset=Math.max(0,offset-PAGE_SIZE);renderNumbers()};
+ const info=document.createElement('span');info.className='note';info.textContent=`${current.start+offset} تا ${end} از ${current.end-current.start+1}`;
+ const next=document.createElement('button');next.className='secondary';next.textContent='صفحهٔ بعد';next.disabled=current.start+offset+PAGE_SIZE>current.end;next.onclick=()=>{offset+=PAGE_SIZE;renderNumbers()};
+ pg.append(prev,info,next);
+}
+function renderPrimeList(){
+ const section=$('primeSection'),box=$('primeNumbers');if(!section||!box||!current)return;
+ const enabled=$('showPrimes').checked;section.hidden=!enabled;box.replaceChildren();if(!enabled)return;
+ current.primes.forEach(n=>{const chip=document.createElement('span');chip.className='prime-chip';chip.textContent=n;box.append(chip)});
+ if(!current.primes.length){const p=document.createElement('p');p.className='note';p.textContent='در این بازه عدد اولی وجود ندارد.';box.append(p)}
+}
+function renderStages(){
+ const box=$('stages');box.replaceChildren();
+ if(!$('showStages').checked){box.hidden=true;return}box.hidden=false;
+ const h=document.createElement('h3');h.textContent='مراحل غربال';box.append(h);
+ if(current.start<=1&&current.end>=1){const p=document.createElement('p');p.textContent='مرحلهٔ آغازین: ۱';box.append(p)}
+ if(!$('showFresh').checked){const p=document.createElement('p');p.textContent='برای دیدن عددهای تازه‌خط‌خورده، گزینهٔ مربوط را در تنظیمات فعال کن.';box.append(p);return}
+ current.stages.forEach(st=>{const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');
+ s.textContent=`مرحلهٔ ${st.p}؛ ${st.nums.length} عدد تازه‌خط‌خورده`;p.textContent=st.nums.join('، ');d.append(s,p);box.append(d)});
+}
+function rankState(){try{return compute(Number($('rs').value),Number($('re').value))}catch(e){$('rankResult').textContent=e.message;return null}}
+function inspectNumber(){
+ let s;try{s=compute(Number($('cs').value),Number($('ce').value))}catch(e){$('checkResult').textContent=e.message;return}
+ const n=Number($('checkTarget').value);
+ if(!Number.isSafeInteger(n)||n<s.start||n>s.end){$('checkResult').textContent='عدد باید صحیح و داخل بازهٔ واردشده باشد.';return}
+ if(s.primeSet.has(n))$('checkResult').textContent=`${n} عدد اول است و در غربال خط نمی‌خورد.`;
+ else if(s.rank.has(n))$('checkResult').textContent=`عدد ${n} در رتبهٔ ${s.rank.get(n)} خط می‌خورد؛ مرحلهٔ ${s.by.get(n)}.`;
+ else $('checkResult').textContent='رتبه‌ای برای این عدد ثبت نشده است.';
+ addHistory('بررسی عدد', $('checkResult').textContent);
+}
+function findRank(){
+ const s=rankState();if(!s)return;const r=Number($('rankInput').value);
+ if(!Number.isSafeInteger(r)||r<1||r>s.order.length){$('rankResult').textContent=`رتبه باید بین ۱ و ${s.order.length} باشد.`;return}
+ const n=s.order[r-1];$('rankResult').textContent=`عدد رتبهٔ ${r} برابر ${n} است.`;$('target').value=n;
+}
+let calcScientific=false;
+function setCalcMode(scientific){calcScientific=scientific;$('scientificMode').classList.toggle('secondary',!scientific);$('normalMode').classList.toggle('secondary',scientific);const box=$('scienceKeys');box.replaceChildren();box.hidden=!scientific;if(scientific){const extras=[['sin(','sin'],['cos(','cos'],['tan(','tan'],['sqrt(','√'],['log10(','log'],['log(','ln'],['^','xʸ'],['!','n!'],['π','π'],['abs(','|x|']];extras.forEach(([v,t])=>{const b=document.createElement('button');b.textContent=t;if(v==='^'||v==='!')b.className='operator';b.onclick=()=>appendCalc(v);box.append(b)})}}
+function appendCalc(value){const input=$('calcInput');input.value+=value;$('calcExpression').textContent=displayCalc(input.value);$('calcAnswer').textContent='';}
+function displayCalc(value){return value.replace(/\^([0-9]+)/g,(_,n)=>Array.from(n).map(c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]).join('')).replace(/\^/g,'^').replace(/[0-9]/g,ch=>'۰۱۲۳۴۵۶۷۸۹'[Number(ch)]).replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−');}
+function clearCalc(){$('calcInput').value='';$('calcExpression').textContent='';$('calcAnswer').textContent='';}
+function backspaceCalc(){const input=$('calcInput');input.value=input.value.slice(0,-1);$('calcExpression').textContent=displayCalc(input.value);$('calcAnswer').textContent='';}
+function calculateExpression(){
+ const raw=$('calcInput').value.trim();if(!raw){$('calcAnswer').textContent='';return}
+ try{
+  let expr=raw.replace(/[۰-۹]/g,ch=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(ch)).replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/π/g,'pi').replace(/\^/g,'**');
+  expr=expr.replace(/(\d+(?:\.\d+)?)!/g,'factorial($1)');
+  if(expr.length>160||!/^[0-9+\-*/().,%\sA-Za-z_]*$/.test(expr))throw Error('invalid');
+  const factorial=n=>{if(!Number.isInteger(n)||n<0||n>170)throw Error('factorial');let r=1;for(let i=2;i<=n;i++)r*=i;return r};
+  const names={sqrt:Math.sqrt,sin:x=>Math.sin(x*Math.PI/180),cos:x=>Math.cos(x*Math.PI/180),tan:x=>Math.tan(x*Math.PI/180),abs:Math.abs,round:Math.round,floor:Math.floor,ceil:Math.ceil,log:Math.log,log10:Math.log10,factorial,pi:Math.PI,e:Math.E};
+  if(/\b(?:constructor|prototype|window|document|globalThis|Function|eval|import)\b/.test(expr))throw Error('invalid');
+  const result=Function(...Object.keys(names),'"use strict";return ('+expr+');')(...Object.values(names));
+  if(typeof result!=='number'||!Number.isFinite(result))throw Error('invalid');
+  const answer=Number(result.toPrecision(12)).toString();$('calcExpression').textContent=displayCalc(raw);$('calcAnswer').textContent=(result<0?'−':'')+displayCalc(answer.replace('-',''));addHistory('ماشین‌حساب',raw+' = '+answer);
+ }catch(e){$('calcAnswer').textContent='خطا';}
+}
+
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t}return a}
+function calcGcdOnly(){const a=Number($('ga').value),b=Number($('gb').value);if(!Number.isSafeInteger(a)||!Number.isSafeInteger(b)){ $('gcdOnlyResult').textContent='دو عدد صحیح معتبر وارد کن.';return}if(a===0&&b===0){$('gcdOnlyResult').textContent='ب.م.مِ صفر و صفر تعریف نشده است.';return}const g=gcd(a,b);$('gcdOnlyResult').textContent=`ب.م.م(${a}، ${b}) = ${g}`;addHistory('ب.م.م',`ورودی‌ها ${a} و ${b}؛ نتیجه ${g}`)}
+function calcLcmOnly(){const a=Number($('la').value),b=Number($('lb').value);if(!Number.isSafeInteger(a)||!Number.isSafeInteger(b)){ $('lcmOnlyResult').textContent='دو عدد صحیح معتبر وارد کن.';return}const l=(a===0||b===0)?0:Math.abs((a/gcd(a,b))*b);$('lcmOnlyResult').textContent=`ک.م.م(${a}، ${b}) = ${l}`;addHistory('ک.م.م',`ورودی‌ها ${a} و ${b}؛ نتیجه ${l}`)}
+function calcGcd(){
+ const a=Number($('a').value),b=Number($('b').value);
+ if(!Number.isSafeInteger(a)||!Number.isSafeInteger(b)){$('gcdResult').textContent='دو عدد صحیح در محدودهٔ امن وارد کن.';return}
+ if(a===0&&b===0){$('gcdResult').textContent='برای (۰، ۰)، ب.م.م و ک.م.م تعریف نشده‌اند.';return}
+ const g=gcd(a,b),l=(a===0||b===0)?0:Math.abs((a/g)*b);
+ $('gcdResult').textContent=`ب.م.م = ${g} ؛ ک.م.م = ${l}`;
+ addHistory('ب.م.م و ک.م.م',`ورودی‌ها ${a} و ${b}؛ ب.م.م ${g}؛ ک.م.م ${l}`);
+}
+const COLORS={blue:'#1769d2',purple:'#7955c7',green:'#16845b',orange:'#c76a16',pink:'#c04487'};
+function setTheme(theme){document.body.classList.toggle('dark',theme==='dark');saveSettings()}
+function toggleTheme(){setTheme(document.body.classList.contains('dark')?'light':'dark')}
+function applySettings(){
+ const color=$('accentColor').value||'blue';const accent=COLORS[color]||COLORS.blue;document.body.style.setProperty('--blue',accent);document.documentElement.style.setProperty('--accent-base',accent);document.querySelector('meta[name="theme-color"]').setAttribute('content',accent);
+ document.documentElement.style.setProperty('--font-scale',$('fontSize').value||'1');document.body.classList.toggle('no-motion',!$('animations').checked);saveSettings();
+}
+function saveSettings(){try{localStorage.setItem(SETTINGS,JSON.stringify({dark:document.body.classList.contains('dark'),showStages:$('showStages').checked,showFresh:$('showFresh').checked,showPrimes:$('showPrimes').checked,accentColor:$('accentColor').value,fontSize:$('fontSize').value,animations:$('animations').checked}))}catch(e){}}
+function loadSettings(){
+ try{const s=JSON.parse(localStorage.getItem(SETTINGS)||'{}');if(s.dark)document.body.classList.add('dark');if(typeof s.showStages==='boolean')$('showStages').checked=s.showStages;if(typeof s.showFresh==='boolean')$('showFresh').checked=s.showFresh;if(typeof s.showPrimes==='boolean')$('showPrimes').checked=s.showPrimes;if(s.accentColor&&COLORS[s.accentColor])$('accentColor').value=s.accentColor;if(s.fontSize)$('fontSize').value=s.fontSize;if(typeof s.animations==='boolean')$('animations').checked=s.animations;}catch(e){}applySettings();
+}
+function resetSettings(){if(!confirm('تنظیمات به حالت اولیه برگردد؟'))return;localStorage.removeItem(SETTINGS);document.body.classList.remove('dark','no-motion');$('showStages').checked=true;$('showFresh').checked=true;$('showPrimes').checked=true;$('accentColor').value='blue';$('fontSize').value='1';$('animations').checked=true;loadSettings();runSieve()}
+function fallbackCopy(text){const t=document.createElement('textarea');t.value=text;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.append(t);t.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}t.remove();return ok}
+async function copyText(text,label){let ok=false;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);ok=true}else ok=fallbackCopy(text)}catch(e){ok=fallbackCopy(text)}$('copyStatus').textContent=ok?`${label} با موفقیت کپی شد.`:`کپی خودکار ممکن نشد؛ متن را لمس طولانی کن و کپی را بزن.`;if(!ok){const t=document.createElement('textarea');t.value=text;t.readOnly=true;t.style.width='100%';t.style.marginTop='8px';$('copyStatus').after(t);t.focus();t.select()}}
+function copyContact(){copyText('@O1237','شناسهٔ سازنده')}
+function copyEmail(){copyText('tahajavadi001@gmail.com','ایمیل')}
+function emailContact(){location.href='mailto:tahajavadi001@gmail.com?subject='+encodeURIComponent('ارتباط دربارهٔ برنامهٔ ریاضیِ آسان')}
+function factorize(){
+ const raw=$('factorInput').value,n=Number(raw),box=$('factorResult'),tree=$('factorTree'),details=$('factorDetails');tree.replaceChildren();details.textContent='';
+ if(raw.trim()===''||!Number.isSafeInteger(n)){box.textContent='لطفاً یک عدد صحیح معتبر وارد کن.';return}
+ if(Math.abs(n)>Number.MAX_SAFE_INTEGER){box.textContent='عدد خارج از محدودهٔ قابل محاسبه است.';return}
+ if(n===0){box.textContent='صفر تجزیهٔ یکتایی به عامل‌های اول ندارد.';tree.textContent='برای صفر درخت تجزیه تعریف نمی‌شود.';return}
+ const abs=Math.abs(n);if(abs===1){box.textContent=n<0?'−۱ = −۱؛ عدد ۱ عامل اولی ندارد.':'عدد ۱ عامل اولی ندارد.';tree.textContent='درختی برای ۱ وجود ندارد؛ ۱ عدد اول نیست.';return}
+ const factors=[];let x=abs;for(let d=2;d*d<=x;d+=(d===2?1:2)){while(x%d===0){factors.push(d);x/=d}}if(x>1)factors.push(x);
+ const counts={};factors.forEach(f=>counts[f]=(counts[f]||0)+1);const formula=Object.entries(counts).map(([f,p])=>p===1?f:`${f}^${p}`).join(' × ');
+ box.textContent=`${n} = ${n<0?'−1 × ':''}${formula}`;
+ const pillbox=document.createElement('div');factors.forEach(f=>{const span=document.createElement('span');span.className='pill';span.textContent=f;pillbox.append(span)});details.append('عامل‌های اول: ',pillbox);
+ const info=document.createElement('p');info.textContent=`تعداد عامل‌های اول با تکرار: ${factors.length}؛ عامل‌های اول متمایز: ${Object.keys(counts).length}؛ تعداد مقسوم‌علیه‌های مثبت: ${Object.values(counts).reduce((a,p)=>a*(p+1),1)}`;details.append(info);
+ function makeTreeFromFactors(list){
+  const value=list.reduce((a,b)=>a*b,1),node=document.createElement('div');node.className='tree-node';
+  const val=document.createElement('span');val.className='tree-value';val.textContent=value;node.append(val);
+  if(list.length===1){node.classList.add('tree-leaf');return node}
+  // Split the factor list into two groups with products as balanced as possible.
+  let best=1,bestDiff=Infinity;for(let i=1;i<list.length;i++){const left=list.slice(0,i).reduce((a,b)=>a*b,1),right=list.slice(i).reduce((a,b)=>a*b,1),diff=Math.abs(left-right);if(diff<bestDiff){bestDiff=diff;best=i}}
+  const children=document.createElement('div');children.className='tree-children';children.append(makeTreeFromFactors(list.slice(0,best)),makeTreeFromFactors(list.slice(best)));node.append(children);return node
+ }
+ tree.append(makeTreeFromFactors(factors));if(n<0){const neg=document.createElement('p');neg.className='note';neg.textContent='عدد منفی: علامت منفی جدا از درخت عامل‌های اولِ قدرمطلق در نظر گرفته شده است.';tree.append(neg)}
+ addHistory('تجزیهٔ عدد',`${n} = ${n<0?'−1 × ':''}${formula}`);
+}
+function isPrimeNumber(n){if(n<2)return false;for(let d=2;d*d<=n;d++)if(n%d===0)return false;return true}
+loadSettings();page('home');renderHistory();runSieve();factorize();
+</script>
+</body>
+</html>
