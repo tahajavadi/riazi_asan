@@ -23,6 +23,9 @@ public class MainActivity extends Activity {
         window.setStatusBarColor(Color.rgb(248, 249, 252));
         window.setNavigationBarColor(Color.BLACK);
         window.getDecorView().setSystemUiVisibility(0);
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            window.setStatusBarColor(Color.rgb(248, 249, 252));
+        }
 
         webView = new WebView(this);
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
