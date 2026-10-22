@@ -449,8 +449,10 @@ function calculateExpression(){
  try{
   if(!window.math||typeof math.parse!=='function')throw Error('math engine unavailable');
   if(raw.length>160)throw Error('too long');
-  let expr=raw.replace(/[۰-۹]/g,ch=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(ch)))
-   .replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-')
+  let expr=raw
+   .replace(/[۰-۹]/g,ch=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(ch)))
+   .replace(/[（﹙❨﴿]/g,'(').replace(/[）﹚❩﴾]/g,')')
+   .replace(/×/g,'*').replace(/÷/g,'/').replace(/[−–]/g,'-')
    .replace(/π/g,'pi').replace(/٫/g,'.').replace(/٪/g,'%');
   // Convert postfix factorial to math.js factorial calls.
   expr=expr.replace(/(\d+(?:\.\d+)?)!/g,'factorial($1)');
