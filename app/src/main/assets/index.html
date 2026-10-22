@@ -70,6 +70,8 @@ summary{cursor:pointer;font-weight:bold}
       <button class="secondary" onclick="page('rank')">🎯 پیدا کردن عدد از روی رتبه</button>
       <button class="secondary" onclick="page('checkNumber')">🔎 بررسی عدد</button>
       <button class="secondary" onclick="page('numberType')">🔍 نوع عدد و شمارنده‌ها</button>
+      <button class="secondary" onclick="page('sumDivisors')">➕ مجموع شمارنده‌ها</button>
+      <button class="secondary" onclick="page('sumReciprocals')">⅟ مجموع معکوسات</button>
       <button class="secondary" onclick="page('factor')">🌳 درخت تجزیه</button>
       <button class="secondary" onclick="page('gcdOnly')">➗ ب.م.م</button>
       <button class="secondary" onclick="page('lcmOnly')">✖️ ک.م.م</button>
@@ -78,6 +80,13 @@ summary{cursor:pointer;font-weight:bold}
       <button class="secondary" onclick="page('settings')">⚙️ تنظیمات</button>
       <button class="secondary" onclick="page('about')">ℹ️ دربارهٔ برنامه</button>
     </div>
+  <div class="card">
+    <h2>🔍 بررسی نوع عدد</h2>
+    <label for="homeNumberTypeInput">عدد صحیح مثبت</label>
+    <input id="homeNumberTypeInput" type="text" inputmode="none" value="35">
+    <div class="actions"><button onclick="inspectHomeNumberType()">بررسی نوع عدد</button></div>
+    <div id="homeNumberTypeResult" class="result" aria-live="polite">عدد را وارد کن.</div>
+  </div>
   </div>
 </section>
 
@@ -85,8 +94,8 @@ summary{cursor:pointer;font-weight:bold}
   <div class="card">
     <h2>غربال اراتستن</h2>
     <div class="grid">
-      <div><label for="start">شروع بازه</label><input id="start" type="number" value="1"></div>
-      <div><label for="end">پایان بازه</label><input id="end" type="number" value="100"></div>
+      <div><label for="start">شروع بازه</label><input id="start" type="text" inputmode="none" autocomplete="off" value="1"></div>
+      <div><label for="end">پایان بازه</label><input id="end" type="text" inputmode="none" autocomplete="off" value="100"></div>
     </div>
     <div class="actions"><button onclick="runSieve()">اجرای غربال</button></div>
     <div id="sieveInfo" class="result">بازه را وارد کن.</div>
@@ -102,10 +111,10 @@ summary{cursor:pointer;font-weight:bold}
   <div class="card">
     <h2>پیدا کردن عدد از روی رتبه</h2>
     <div class="grid">
-      <div><label for="rs">شروع بازه</label><input id="rs" type="number" value="1"></div>
-      <div><label for="re">پایان بازه</label><input id="re" type="number" value="100"></div>
+      <div><label for="rs">شروع بازه</label><input id="rs" type="text" inputmode="none" autocomplete="off" value="1"></div>
+      <div><label for="re">پایان بازه</label><input id="re" type="text" inputmode="none" autocomplete="off" value="100"></div>
     </div>
-    <label for="rankInput">رتبهٔ خط‌خوردن</label><input id="rankInput" type="number" value="10">
+    <label for="rankInput">رتبهٔ خط‌خوردن</label><input id="rankInput" type="text" inputmode="none" autocomplete="off" value="10">
     <div class="actions"><button onclick="findRank()">پیدا کردن عدد</button></div>
     <div id="rankResult" class="result"></div>
   </div>
@@ -115,10 +124,10 @@ summary{cursor:pointer;font-weight:bold}
   <div class="card">
     <h2>بررسی عدد</h2>
     <div class="grid">
-      <div><label for="cs">شروع بازه</label><input id="cs" type="number" value="1"></div>
-      <div><label for="ce">پایان بازه</label><input id="ce" type="number" value="100"></div>
+      <div><label for="cs">شروع بازه</label><input id="cs" type="text" inputmode="none" autocomplete="off" value="1"></div>
+      <div><label for="ce">پایان بازه</label><input id="ce" type="text" inputmode="none" autocomplete="off" value="100"></div>
     </div>
-    <label for="checkTarget">عدد موردنظر</label><input id="checkTarget" type="number" value="35">
+    <label for="checkTarget">عدد موردنظر</label><input id="checkTarget" type="text" inputmode="none" autocomplete="off" value="35">
     <div class="actions"><button onclick="inspectNumber()">بررسی عدد</button></div>
     <div id="checkResult" class="result"></div>
   </div>
@@ -130,7 +139,7 @@ summary{cursor:pointer;font-weight:bold}
     <h2>نوع عدد و شمارنده‌ها</h2>
     <p class="note">یک عدد صحیح مثبت وارد کن تا اول یا مرکب بودن، شمارنده‌ها و تعداد آن‌ها نمایش داده شود.</p>
     <label for="numberTypeInput">عدد موردنظر</label>
-    <input id="numberTypeInput" type="number" min="1" step="1" value="35">
+    <input id="numberTypeInput" type="text" inputmode="none" autocomplete="off" min="1" step="1" value="35">
     <div class="actions">
       <button onclick="inspectNumberType()">بررسی نوع عدد</button>
     </div>
@@ -138,14 +147,36 @@ summary{cursor:pointer;font-weight:bold}
   </div>
 </section>
 
+<section class="page" id="sumDivisors">
+  <div class="card">
+    <h2>مجموع شمارنده‌های مثبت</h2>
+    <p class="note">مجموع همهٔ شمارنده‌های مثبت عدد واردشده را حساب می‌کند.</p>
+    <label for="sumDivisorsInput">عدد صحیح مثبت</label>
+    <input id="sumDivisorsInput" type="text" inputmode="none" value="35">
+    <div class="actions"><button onclick="calculateDivisorSums()">محاسبهٔ مجموع شمارنده‌ها</button></div>
+    <div id="sumDivisorsResult" class="result" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="page" id="sumReciprocals">
+  <div class="card">
+    <h2>مجموع معکوسات شمارنده‌ها</h2>
+    <p class="note">معکوس هر شمارنده برابر ۱ تقسیم بر آن شمارنده است؛ مجموع آن‌ها محاسبه می‌شود.</p>
+    <label for="sumReciprocalsInput">عدد صحیح مثبت</label>
+    <input id="sumReciprocalsInput" type="text" inputmode="none" value="35">
+    <div class="actions"><button onclick="calculateReciprocalSum()">محاسبهٔ مجموع معکوسات</button></div>
+    <div id="sumReciprocalsResult" class="result" aria-live="polite"></div>
+  </div>
+</section>
+
 <section class="page" id="gcdOnly">
   <div class="card"><h2>ب.م.م دو عدد</h2><p class="note">ب.م.م بزرگ‌ترین عدد صحیح مثبتی است که هر دو عدد بر آن بخش‌پذیرند.</p>
-  <div class="grid"><div><label for="ga">عدد اول</label><input id="ga" type="number" value="12"></div><div><label for="gb">عدد دوم</label><input id="gb" type="number" value="18"></div></div>
+  <div class="grid"><div><label for="ga">عدد اول</label><input id="ga" type="text" inputmode="none" autocomplete="off" value="12"></div><div><label for="gb">عدد دوم</label><input id="gb" type="text" inputmode="none" autocomplete="off" value="18"></div></div>
   <div class="actions"><button onclick="calcGcdOnly()">محاسبهٔ ب.م.م</button></div><div id="gcdOnlyResult" class="result"></div></div>
 </section>
 <section class="page" id="lcmOnly">
   <div class="card"><h2>ک.م.م دو عدد</h2><p class="note">ک.م.م کوچک‌ترین مضرب مثبت مشترک دو عدد است؛ اگر یکی از عددها صفر باشد، نتیجه صفر است.</p>
-  <div class="grid"><div><label for="la">عدد اول</label><input id="la" type="number" value="12"></div><div><label for="lb">عدد دوم</label><input id="lb" type="number" value="18"></div></div>
+  <div class="grid"><div><label for="la">عدد اول</label><input id="la" type="text" inputmode="none" autocomplete="off" value="12"></div><div><label for="lb">عدد دوم</label><input id="lb" type="text" inputmode="none" autocomplete="off" value="18"></div></div>
   <div class="actions"><button onclick="calcLcmOnly()">محاسبهٔ ک.م.م</button></div><div id="lcmOnlyResult" class="result"></div></div>
 </section>
 
@@ -153,7 +184,7 @@ summary{cursor:pointer;font-weight:bold}
   <div class="card">
     <h2>تجزیه به عامل‌های اول</h2>
     <p class="note">عدد صحیح را وارد کن تا عامل‌های اول، توان‌ها و درخت تجزیه نمایش داده شود.</p>
-    <label for="factorInput">عدد موردنظر</label><input id="factorInput" type="number" value="60" step="1">
+    <label for="factorInput">عدد موردنظر</label><input id="factorInput" type="text" inputmode="none" autocomplete="off" value="60" step="1">
     <div class="actions"><button onclick="factorize()">تجزیه کن</button></div>
     <div id="factorResult" class="result"></div>
     <h3>درخت تجزیه</h3><div id="factorTree" class="factor-tree result"></div>
@@ -221,6 +252,8 @@ summary{cursor:pointer;font-weight:bold}
   <button data-page="rank" onclick="page('rank')"><span class="nav-icon">#</span><span class="nav-label">رتبه</span></button>
   <button data-page="checkNumber" onclick="page('checkNumber')"><span class="nav-icon">⌕</span><span class="nav-label">بررسی عدد</span></button>
   <button data-page="numberType" onclick="page('numberType')"><span class="nav-icon">√</span><span class="nav-label">نوع عدد</span></button>
+  <button data-page="sumDivisors" onclick="page('sumDivisors')"><span class="nav-icon">Σ</span><span class="nav-label">مجموع شمارنده‌ها</span></button>
+  <button data-page="sumReciprocals" onclick="page('sumReciprocals')"><span class="nav-icon">⅟</span><span class="nav-label">مجموع معکوسات</span></button>
   
   <button data-page="gcdOnly" onclick="page('gcdOnly')"><span class="nav-icon">÷</span><span class="nav-label">ب.م.م</span></button>
   <button data-page="lcmOnly" onclick="page('lcmOnly')"><span class="nav-icon">×</span><span class="nav-label">ک.م.م</span></button>
@@ -354,6 +387,33 @@ function renderStages(){
 }
 function rankState(){try{return compute(Number($('rs').value),Number($('re').value))}catch(e){$('rankResult').textContent=e.message;return null}}
 
+
+function positiveDivisors(n){
+ const out=[];
+ for(let d=1;d<=Math.floor(Math.sqrt(n));d++){
+  if(n%d===0){out.push(d);if(d!==n/d)out.push(n/d)}
+ }
+ return out.sort((a,b)=>a-b);
+}
+function inspectHomeNumberType(){
+ $('numberTypeInput').value=$('homeNumberTypeInput').value;
+ inspectNumberType();
+ $('homeNumberTypeResult').replaceChildren(...Array.from($('numberTypeResult').childNodes).map(x=>x.cloneNode(true)));
+}
+function calculateDivisorSums(){
+ const raw=$('sumDivisorsInput').value.trim(),n=Number(raw),box=$('sumDivisorsResult');
+ if(!Number.isSafeInteger(n)||n<1||n>1000000000000){box.textContent='یک عدد صحیح مثبت حداکثر تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ وارد کن.';return}
+ const ds=positiveDivisors(n),sum=ds.reduce((a,b)=>a+b,0);
+ box.textContent=`شمارنده‌ها: ${ds.join('، ')}؛ مجموع شمارنده‌ها: ${sum}`;
+ addHistory('مجموع شمارنده‌ها',`${n}: ${sum}`);
+}
+function calculateReciprocalSum(){
+ const raw=$('sumReciprocalsInput').value.trim(),n=Number(raw),box=$('sumReciprocalsResult');
+ if(!Number.isSafeInteger(n)||n<1||n>1000000000000){box.textContent='یک عدد صحیح مثبت حداکثر تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ وارد کن.';return}
+ const ds=positiveDivisors(n),sum=ds.reduce((a,b)=>a+1/b,0);
+ box.textContent=`شمارنده‌ها: ${ds.join('، ')}؛ مجموع معکوسات: ${sum.toLocaleString('en-US',{maximumFractionDigits:12})}`;
+ addHistory('مجموع معکوسات',`${n}: ${sum}`);
+}
 function inspectNumberType(){
  const input=$('numberTypeInput');
  const box=$('numberTypeResult');
@@ -542,6 +602,51 @@ function factorize(){
 }
 function isPrimeNumber(n){if(n<2)return false;for(let d=2;d*d<=n;d++)if(n%d===0)return false;return true}
 loadSettings();page('home');renderHistory();runSieve();factorize();
+
+const numberPadStyle=document.createElement('style');
+numberPadStyle.textContent=`
+#numberPad{position:fixed;z-index:30;left:12px;right:12px;bottom:calc(98px + env(safe-area-inset-bottom));max-width:440px;margin:auto;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 35px #0004}
+#numberPad[hidden]{display:none}
+#numberPad .pad-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#numberPad button{min-height:45px;font-size:18px;touch-action:manipulation}
+#numberPad .pad-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+`;
+document.head.append(numberPadStyle);
+const numberPad=document.createElement('div');
+numberPad.id='numberPad';numberPad.hidden=true;numberPad.setAttribute('dir','rtl');
+numberPad.innerHTML='<div class="pad-head"><b>کیبورد عددی</b><button type="button" class="secondary" data-pad="done">بستن ✓</button></div><div class="pad-grid">'+
+[['7','۷'],['8','۸'],['9','۹'],['4','۴'],['5','۵'],['6','۶'],['1','۱'],['2','۲'],['3','۳'],['-','−'],['0','۰'],['back','⌫'],['clear','پاک‌کردن'],['done','تأیید']].map(([v,t])=>`<button type="button" data-pad="${v}">${t}</button>`).join('')+
+'</div>';
+document.body.append(numberPad);
+let activeNumberInput=null;
+document.addEventListener('focusin',e=>{
+ const el=e.target;
+ if(el instanceof HTMLInputElement && el.hasAttribute('inputmode') && el.getAttribute('inputmode')==='none' && el.id!=='calcInput'){
+  activeNumberInput=el;numberPad.hidden=false;
+ }
+});
+numberPad.addEventListener('click',e=>{
+ const b=e.target.closest('button[data-pad]');if(!b)return;
+ const action=b.dataset.pad;
+ if(action==='done'){numberPad.hidden=true;activeNumberInput=null;return}
+ if(!activeNumberInput)return;
+ let v=activeNumberInput.value;
+ if(action==='clear')v='';
+ else if(action==='back')v=v.slice(0,-1);
+ else if(action==='-')v=v.startsWith('-')?v.slice(1):'-'+v;
+ else v+=action;
+ activeNumberInput.value=v;
+ activeNumberInput.dispatchEvent(new Event('input',{bubbles:true}));
+});
+document.addEventListener('pointerdown',e=>{
+ if(!numberPad.hidden&&!numberPad.contains(e.target)&&!(e.target instanceof HTMLInputElement&&e.target.getAttribute('inputmode')==='none')){
+  numberPad.hidden=true;activeNumberInput=null;
+ }
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){numberPad.hidden=true;activeNumberInput=null}
+});
+
 </script>
 </body>
 </html>
