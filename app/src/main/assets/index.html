@@ -435,10 +435,11 @@ function appendCalc(value){
  $('calcExpression').textContent=displayCalc(input.value);$('calcAnswer').textContent='';
 }
 function displayCalc(value){
- return String(value)
+ return '\u200E' + String(value)
   .replace(/[0-9]/g,ch=>'۰۱۲۳۴۵۶۷۸۹'[Number(ch)])
   .replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−')
-  .replace(/\(/g,'⁦(⁩').replace(/\)/g,'⁦)⁩');
+  .replace(/\(/g,'\u200E(\u200E')
+  .replace(/\)/g,'\u200E)\u200E') + '\u200E';
 }
 function clearCalc(){$('calcInput').value='';$('calcExpression').textContent='';$('calcAnswer').textContent='';}
 function backspaceCalc(){const input=$('calcInput');input.value=input.value.slice(0,-1);$('calcExpression').textContent=displayCalc(input.value);$('calcAnswer').textContent='';}
