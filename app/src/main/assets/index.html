@@ -92,7 +92,8 @@ summary{cursor:pointer;font-weight:bold}
     <div id="sieveInfo" class="result">بازه را وارد کن.</div>
     <div id="numbers" class="numbers"></div>
     <div id="pager" class="actions" dir="ltr"></div>
-    <div id="primeSection" class="result"><h3>اعداد اول</h3><p class="note">پس از اجرای غربال، اعداد اول این بازه اینجا نمایش داده می‌شوند.</p><div id="primeNumbers" class="prime-list"></div></div>
+    <div id="primeSection" class="result"><h3>اعداد اول</h3><p class="note">پس از اجرای غربال، اعداد اول این بازه اینجا نمایش داده می‌شوند.</p><div id="primeNumbers" class="prime-list"></div>
+    <div id="primePager" class="actions" dir="ltr"></div></div>
     <div id="stages" class="result"></div>
   </div>
 </section>
@@ -278,7 +279,7 @@ function runSieve(){
  try{
   current=compute(Number($('start').value),Number($('end').value));offset=0;
   $('sieveInfo').textContent=`تعداد اعداد اول: ${current.primes.length} — تعداد خط‌خورده‌ها: ${current.order.length}`;
-  renderNumbers();renderStages();renderPrimeList();
+  renderNumbers();renderStages();renderPrimeList(true);
   $('rs').value=current.start;$('re').value=current.end;
   addHistory('غربال اراتستن',`بازه ${current.start} تا ${current.end}؛ ${current.primes.length} عدد اول؛ ${current.order.length} عدد خط‌خورده.`);
  }catch(e){$('sieveInfo').textContent=e.message}
@@ -298,11 +299,49 @@ function renderNumbers(){
  const next=document.createElement('button');next.className='secondary';next.textContent='صفحهٔ بعد';next.disabled=current.start+offset+PAGE_SIZE>current.end;next.onclick=()=>{offset+=PAGE_SIZE;renderNumbers()};
  pg.append(prev,info,next);
 }
-function renderPrimeList(){
- const section=$('primeSection'),box=$('primeNumbers');if(!section||!box||!current)return;
- const enabled=$('showPrimes').checked;section.hidden=!enabled;box.replaceChildren();if(!enabled)return;
- current.primes.forEach(n=>{const chip=document.createElement('span');chip.className='prime-chip';chip.textContent=n;box.append(chip)});
- if(!current.primes.length){const p=document.createElement('p');p.className='note';p.textContent='در این بازه عدد اولی وجود ندارد.';box.append(p)}
+let primeOffset=0;
+const PRIME_PAGE_SIZE=100;
+
+function renderPrimeList(resetPage=false){
+ const section=$('primeSection'),box=$('primeNumbers'),pg=$('primePager');
+ if(!section||!box||!pg||!current)return;
+ const enabled=$('showPrimes').checked;
+ section.hidden=!enabled;
+ box.replaceChildren();
+ pg.replaceChildren();
+ if(!enabled)return;
+ if(resetPage)primeOffset=0;
+ const total=current.primes.length;
+ const maxOffset=Math.max(0,Math.floor((total-1)/PRIME_PAGE_SIZE)*PRIME_PAGE_SIZE);
+ primeOffset=Math.min(primeOffset,maxOffset);
+ if(!total){
+  const p=document.createElement('p');
+  p.className='note';
+  p.textContent='در این بازه عدد اولی وجود ندارد.';
+  box.append(p);
+  return;
+ }
+ const end=Math.min(total,primeOffset+PRIME_PAGE_SIZE);
+ current.primes.slice(primeOffset,end).forEach(n=>{
+  const chip=document.createElement('span');
+  chip.className='prime-chip';
+  chip.textContent=n;
+  box.append(chip);
+ });
+ const prev=document.createElement('button');
+ prev.className='secondary';
+ prev.textContent='صفحهٔ قبل';
+ prev.disabled=primeOffset===0;
+ prev.onclick=()=>{primeOffset=Math.max(0,primeOffset-PRIME_PAGE_SIZE);renderPrimeList()};
+ const info=document.createElement('span');
+ info.className='note';
+ info.textContent=`${primeOffset+1} تا ${end} از ${total}`;
+ const next=document.createElement('button');
+ next.className='secondary';
+ next.textContent='صفحهٔ بعد';
+ next.disabled=end>=total;
+ next.onclick=()=>{primeOffset+=PRIME_PAGE_SIZE;renderPrimeList()};
+ pg.append(prev,info,next);
 }
 function renderStages(){
  const box=$('stages');box.replaceChildren();
@@ -398,7 +437,8 @@ function appendCalc(value){
 function displayCalc(value){
  return String(value)
   .replace(/[0-9]/g,ch=>'۰۱۲۳۴۵۶۷۸۹'[Number(ch)])
-  .replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−');
+  .replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−')
+  .replace(/\(/g,'⁦(⁩').replace(/\)/g,'⁦)⁩');
 }
 function clearCalc(){$('calcInput').value='';$('calcExpression').textContent='';$('calcAnswer').textContent='';}
 function backspaceCalc(){const input=$('calcInput');input.value=input.value.slice(0,-1);$('calcExpression').textContent=displayCalc(input.value);$('calcAnswer').textContent='';}
