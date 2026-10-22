@@ -1,13 +1,24 @@
 plugins { id 'com.android.application' }
 
+def versionFile = rootProject.file("app-version.properties")
+def versionProps = new Properties()
+
+if (versionFile.exists()) {
+    versionFile.withInputStream { versionProps.load(it) }
+}
+
+def versionCodeValue = (versionProps.getProperty("VERSION_CODE", "1")).toInteger()
+def versionNameValue = versionProps.getProperty("VERSION_NAME", "1.0")
+
 android {
     namespace 'ir.taha.riaziasan'
     compileSdk 35
+
     defaultConfig {
         applicationId 'ir.taha.riaziasan'
         minSdk 23
         targetSdk 35
-        versionCode 1
-        versionName '1.0'
+        versionCode versionCodeValue
+        versionName versionNameValue
     }
 }
