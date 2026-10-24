@@ -76,8 +76,6 @@ summary{cursor:pointer;font-weight:bold}
       <button class="secondary" onclick="page('gcdOnly')">➗ ب.م.م</button>
       <button class="secondary" onclick="page('lcmOnly')">✖️ ک.م.م</button>
       <button class="secondary" onclick="page('calculator')">🧮 ماشین‌حساب علمی</button>
-      <button class="secondary" onclick="page('equation')">🟰 حل معادله</button>
-      <button class="secondary" onclick="page('geometry')">📐 هندسه؛ مساحت، محیط و حجم</button>
       <button class="secondary" onclick="page('pythagoras')">📏 قضیهٔ فیثاغورس</button>
       <button class="secondary" onclick="page('history')">🕘 تاریخچه</button>
       <button class="secondary" onclick="page('settings')">⚙️ تنظیمات</button>
@@ -205,37 +203,9 @@ summary{cursor:pointer;font-weight:bold}
   </div>
 </section>
 
-<section class="page" id="equation">
-  <div class="card">
-    <h2>🟰 حل معادله</h2>
-    <p>معادله را با متغیر x وارد کن؛ نمونه: 2*x+3=11</p>
-    <label for="equationInput">معادله</label>
-    <input id="equationInput" type="text" dir="ltr"
-      placeholder="مثلاً 2*x+3=11" autocomplete="off">
-    <button onclick="solveEquation()">حل معادله</button>
-    <div id="equationResult" class="result" aria-live="polite"></div>
-    <p>در این نسخه، حل معادلات خطی و درجهٔ دوم در برنامه پیاده‌سازی می‌شود.</p>
-  </div>
-</section>
 
-<section class="page" id="geometry">
-  <div class="card">
-    <h2>📐 محاسبه‌گر هندسه</h2>
-    <label for="shapeType">نوع شکل</label>
-    <select id="shapeType" onchange="updateGeometryFields()">
-      <option value="rectangle">مستطیل</option>
-      <option value="square">مربع</option>
-      <option value="triangle">مثلث</option>
-      <option value="circle">دایره</option>
-      <option value="cube">مکعب</option>
-      <option value="box">مکعب‌مستطیل</option>
-      <option value="cylinder">استوانه</option>
-    </select>
-    <div id="geometryFields"></div>
-    <button onclick="calculateGeometry()">محاسبه</button>
-    <div id="geometryResult" class="result" aria-live="polite"></div>
-  </div>
-</section>
+
+
 
 <section class="page" id="pythagoras">
   <div class="card">
@@ -245,7 +215,7 @@ summary{cursor:pointer;font-weight:bold}
     <input id="pythA" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 3">
     <label for="pythB">ضلع دوم (b)</label>
     <input id="pythB" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 4">
-    <button onclick="calculatePythagoras()">محاسبهٔ وتر</button>
+    <button onclick="calculatePythagoras()" style="margin-top: 12px;">محاسبهٔ وتر</button>
     <div id="pythResult" class="result" aria-live="polite"></div>
   </div>
 </section>
@@ -300,8 +270,6 @@ summary{cursor:pointer;font-weight:bold}
   <button data-page="lcmOnly" onclick="page('lcmOnly')"><span class="nav-icon">×</span><span class="nav-label">ک.م.م</span></button>
   <button data-page="factor" onclick="page('factor')"><span class="nav-icon">⑂</span><span class="nav-label">تجزیه</span></button>
   <button data-page="calculator" onclick="page('calculator')"><span class="nav-icon">∑</span><span class="nav-label">ماشین‌حساب</span></button>
-  <button data-page="equation" onclick="page('equation')"><span class="nav-icon">x=</span><span class="nav-label">معادله</span></button>
-  <button data-page="geometry" onclick="page('geometry')"><span class="nav-icon">📐</span><span class="nav-label">هندسه</span></button>
   <button data-page="pythagoras" onclick="page('pythagoras')"><span class="nav-icon">📏</span><span class="nav-label">فیثاغورث</span></button>
   <button data-page="history" onclick="page('history')"><span class="nav-icon">◷</span><span class="nav-label">تاریخچه</span></button>
   <button data-page="settings" onclick="page('settings')"><span class="nav-icon">⚙</span><span class="nav-label">تنظیمات</span></button>
@@ -337,7 +305,7 @@ function clearHistory(){if(confirm('تاریخچه پاک شود؟')){localStora
 function compute(start,end){
  if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<1||end<start)throw Error('بازه باید شامل دو عدد صحیح مثبت باشد و پایان از شروع کوچک‌تر نباشد.');
  const len=end-start+1;
- if(!Number.isSafeInteger(len)||len>1000000)throw Error('این بازه برای گوشی بزرگ است؛ بازه را کوچک‌تر کن یا به چند بخش تقسیم کن.');
+ if(!Number.isSafeInteger(len))throw Error('طول بازه معتبر نیست.');
  const marked=new Uint8Array(len),order=[],by=new Map(),stages=[];
  if(start<=1&&end>=1){marked[1-start]=1;order.push(1);by.set(1,'آغازین')}
  const root=Math.floor(Math.sqrt(end));
@@ -788,28 +756,115 @@ function calculatePythagoras(){
  if(typeof addHistory==='function')addHistory('قضیهٔ فیثاغورس',`a=${a}، b=${b}، وتر=${c}`);
 }
 
+
+function toggleEquationKeyboard(){
+ const pad=document.getElementById('equationKeyboard');
+ const open=pad.hidden;
+ pad.hidden=!open;
+ pad.style.display=open?'grid':'none';
+}
+
+
 function solveEquation(){
  const out=document.getElementById('equationResult');
  const raw=document.getElementById('equationInput').value
- .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/−/g,'-').replace(/×/g,'*').replace(/÷/g,'/');
+  .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+  .replace(/−/g,'-').replace(/×/g,'*').replace(/÷/g,'/')
+  .replace(/π/g,'pi').trim();
  const parts=raw.split('=');
- if(parts.length!==2){out.textContent='معادله را با یک علامت = وارد کن.';return}
+ if(!raw || parts.length!==2 || !parts[0].trim() || !parts[1].trim()){
+  out.textContent='دو طرف معادله را با دقیقاً یک علامت = وارد کن.';
+  return;
+ }
+
  try{
-  const expr=`(${parts[0]})-(${parts[1]})`;
-  const f=x=>math.evaluate(expr,{x});
-  const c=f(0),p=f(1),m=f(-1),a=(p+m)/2-c,b=(p-m)/2;
-  const tol=1e-8;
-  for(const x of [2,-2,3])if(Math.abs(f(x)-(a*x*x+b*x+c))>tol)throw Error();
+  const left=math.parse(parts[0]);
+  const right=math.parse(parts[1]);
+
+  // چندجمله‌ای به‌شکل [عدد ثابت، ضریب x، ضریب x²]
+  const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]];
+  const neg=a=>a.map(v=>-v);
+  const mul=(a,b)=>{
+   const r=[0,0,0,0,0];
+   for(let i=0;i<3;i++)for(let j=0;j<3;j++)r[i+j]+=a[i]*b[j];
+   if(r.slice(3).some(v=>Math.abs(v)>1e-10))
+    throw Error('degree');
+   return r.slice(0,3);
+  };
+  const poly=node=>{
+   if(node.type==='ConstantNode'){
+    const n=Number(node.value);
+    if(!Number.isFinite(n))throw Error('constant');
+    return [n,0,0];
+   }
+   if(node.type==='SymbolNode'){
+    if(node.name==='x')return [0,1,0];
+    if(node.name==='pi')return [Math.PI,0,0];
+    if(node.name==='e')return [Math.E,0,0];
+    throw Error('symbol');
+   }
+   if(node.type==='ParenthesisNode')return poly(node.content);
+   if(node.type==='OperatorNode'){
+    const args=node.args.map(poly);
+    if(args.length===1){
+     if(node.op==='+')return args[0];
+     if(node.op==='-')return neg(args[0]);
+     throw Error('unary');
+    }
+    if(args.length!==2)throw Error('operator');
+    const [a,b]=args;
+    if(node.op==='+')return add(a,b);
+    if(node.op==='-')return add(a,neg(b));
+    if(node.op==='*')return mul(a,b);
+    if(node.op==='/'){
+     if(Math.abs(b[1])+Math.abs(b[2])>1e-10 || Math.abs(b[0])<1e-12)
+      throw Error('division');
+     return a.map(v=>v/b[0]);
+    }
+    if(node.op==='^'){
+     if(Math.abs(b[1])+Math.abs(b[2])>1e-10 ||
+        ![0,1,2].some(n=>Math.abs(b[0]-n)<1e-10))
+      throw Error('power');
+     const n=Math.round(b[0]);
+     if(n===0)return [1,0,0];
+     if(n===1)return a;
+     return mul(a,a);
+    }
+   }
+   throw Error('unsupported');
+  };
+
+  const A=poly(left),B=poly(right);
+  const q=add(A,neg(B));
+  let [c,b,a]=q;
+  const tol=1e-10;
+  const fmt=n=>Number(n.toPrecision(10)).toLocaleString('fa-IR');
+  if(![a,b,c].every(Number.isFinite))throw Error('number');
+
   if(Math.abs(a)<tol){
-   if(Math.abs(b)<tol)out.textContent=Math.abs(c)<tol?'این تساوی برای همهٔ xها برقرار است.':'جواب حقیقی ندارد.';
-   else out.textContent='جواب: x = '+(-c/b);
+   if(Math.abs(b)<tol){
+    out.textContent=Math.abs(c)<tol
+     ?'این تساوی برای همهٔ مقدارهای x برقرار است.'
+     :'این معادله جواب ندارد.';
+   }else{
+    out.textContent='جواب معادله:\nx = '+fmt(-c/b);
+   }
   }else{
    const d=b*b-4*a*c;
-   if(d < -tol)out.textContent='جواب حقیقی ندارد.';
-   else if(Math.abs(d)<=tol)out.textContent='جواب مضاعف: x = '+(-b/(2*a));
-   else out.textContent='جواب اول: x₁ = '+((-b+Math.sqrt(d))/(2*a))+'\nجواب دوم: x₂ = '+((-b-Math.sqrt(d))/(2*a));
+   if(d < -tol){
+    out.textContent='این معادله جواب حقیقی ندارد.';
+   }else if(Math.abs(d)<=tol){
+    out.textContent='جواب مضاعف:\nx = '+fmt(-b/(2*a));
+   }else{
+    out.textContent='جواب اول: x₁ = '+fmt((-b+Math.sqrt(d))/(2*a))+
+     '\nجواب دوم: x₂ = '+fmt((-b-Math.sqrt(d))/(2*a));
+   }
   }
- }catch(e){out.textContent='این معادله پشتیبانی نمی‌شود؛ نمونه: 2*x+3=11'}
+  if(typeof addHistory==='function')
+   addHistory('حل معادله',raw+'؛ '+out.textContent.replace(/\n/g,'، '));
+ }catch(e){
+  out.textContent='این نسخه فقط معادلات خطی و درجهٔ دوم با عملیات +، −، ×، ÷ و توان‌های ۰ تا ۲ را حل می‌کند. این معادله پشتیبانی نمی‌شود.';
+ }
 }
 
 loadSettings();page('home');renderHistory();runSieve();factorize();
