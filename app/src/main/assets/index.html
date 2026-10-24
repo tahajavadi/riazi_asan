@@ -417,14 +417,93 @@ function renderPrimeList(resetPage=false){
  next.onclick=()=>{primeOffset+=PRIME_PAGE_SIZE;renderPrimeList()};
  pg.append(prev,info,next);
 }
+const STAGE_PAGE_SIZE=300;
+const stagePageOffsets=new Map();
+
 function renderStages(){
- const box=$('stages');box.replaceChildren();
- if(!$('showStages').checked){box.hidden=true;return}box.hidden=false;
- const h=document.createElement('h3');h.textContent='مراحل غربال';box.append(h);
- if(current.start<=1&&current.end>=1){const p=document.createElement('p');p.textContent='مرحلهٔ آغازین: ۱';box.append(p)}
- if(!$('showFresh').checked){const p=document.createElement('p');p.textContent='برای دیدن عددهای تازه‌خط‌خورده، گزینهٔ مربوط را در تنظیمات فعال کن.';box.append(p);return}
- current.stages.forEach(st=>{const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');
- s.textContent=`مرحلهٔ ${st.p}؛ ${st.nums.length} عدد تازه‌خط‌خورده`;p.textContent=st.nums.join('، ');d.append(s,p);box.append(d)});
+ const box=$('stages');
+ box.replaceChildren();
+ if(!$('showStages').checked){box.hidden=true;return}
+ box.hidden=false;
+
+ const h=document.createElement('h3');
+ h.textContent='مراحل غربال';
+ box.append(h);
+
+ if(current.start<=1&&current.end>=1){
+  const p=document.createElement('p');
+  p.textContent='مرحلهٔ آغازین: ۱';
+  box.append(p);
+ }
+
+ if(!$('showFresh').checked){
+  const p=document.createElement('p');
+  p.textContent='برای دیدن عددهای تازه‌خط‌خورده، گزینهٔ مربوط را در تنظیمات فعال کن.';
+  box.append(p);
+  return;
+ }
+
+ current.stages.forEach(st=>{
+  const d=document.createElement('details');
+  const s=document.createElement('summary');
+  const content=document.createElement('div');
+  const nums=st.nums;
+  const total=nums.length;
+  const maxOffset=Math.max(0,Math.floor((total-1)/STAGE_PAGE_SIZE)*STAGE_PAGE_SIZE);
+  let offset=Math.min(stagePageOffsets.get(st.p)||0,maxOffset);
+
+  s.textContent=`مرحلهٔ ${st.p}؛ ${total.toLocaleString('fa-IR')} عدد تازه‌خط‌خورده`;
+  d.append(s,content);
+
+  function renderStagePage(){
+   content.replaceChildren();
+
+   const end=Math.min(total,offset+STAGE_PAGE_SIZE);
+   const p=document.createElement('p');
+   p.textContent=total
+    ? `نمایش ${ (offset+1).toLocaleString('fa-IR') } تا ${end.toLocaleString('fa-IR')} از ${total.toLocaleString('fa-IR')} عدد`
+    : 'در این مرحله عددی تازه خط نخورده است.';
+   content.append(p);
+
+   if(total){
+    const list=document.createElement('p');
+    list.dir='rtl';
+    list.style.overflowWrap='anywhere';
+    list.textContent=nums.slice(offset,end).join('، ');
+    content.append(list);
+   }
+
+   const pager=document.createElement('div');
+   pager.className='actions';
+   pager.dir='ltr';
+
+   const prev=document.createElement('button');
+   prev.className='secondary';
+   prev.textContent='صفحهٔ قبل';
+   prev.disabled=offset===0;
+   prev.onclick=()=>{
+    offset=Math.max(0,offset-STAGE_PAGE_SIZE);
+    stagePageOffsets.set(st.p,offset);
+    renderStagePage();
+   };
+
+   const next=document.createElement('button');
+   next.className='secondary';
+   next.textContent='صفحهٔ بعد';
+   next.disabled=offset+STAGE_PAGE_SIZE>=total;
+   next.onclick=()=>{
+    offset+=STAGE_PAGE_SIZE;
+    stagePageOffsets.set(st.p,offset);
+    renderStagePage();
+   };
+
+   pager.append(prev,next);
+   content.append(pager);
+  }
+
+  renderStagePage();
+  box.append(d);
+ });
 }
 function rankState(){try{return compute(Number($('rs').value),Number($('re').value))}catch(e){$('rankResult').textContent=e.message;return null}}
 
