@@ -76,6 +76,9 @@ summary{cursor:pointer;font-weight:bold}
       <button class="secondary" onclick="page('gcdOnly')">➗ ب.م.م</button>
       <button class="secondary" onclick="page('lcmOnly')">✖️ ک.م.م</button>
       <button class="secondary" onclick="page('calculator')">🧮 ماشین‌حساب علمی</button>
+      <button class="secondary" onclick="page('equation')">🟰 حل معادله</button>
+      <button class="secondary" onclick="page('geometry')">📐 هندسه؛ مساحت، محیط و حجم</button>
+      <button class="secondary" onclick="page('pythagoras')">📏 قضیهٔ فیثاغورس</button>
       <button class="secondary" onclick="page('history')">🕘 تاریخچه</button>
       <button class="secondary" onclick="page('settings')">⚙️ تنظیمات</button>
       <button class="secondary" onclick="page('about')">ℹ️ دربارهٔ برنامه</button>
@@ -199,6 +202,51 @@ summary{cursor:pointer;font-weight:bold}
       <button onclick="appendCalc('1')">۱</button><button onclick="appendCalc('2')">۲</button><button onclick="appendCalc('3')">۳</button><button class="operator" onclick="appendCalc('−')">−</button>
       <button onclick="appendCalc('0')">۰</button><button onclick="appendCalc('.')">.</button><button class="operator" onclick="appendCalc('+')">+</button><button class="utility" onclick="calculateExpression()">=</button>
     </div>
+  </div>
+</section>
+
+<section class="page" id="equation">
+  <div class="card">
+    <h2>🟰 حل معادله</h2>
+    <p>معادله را با متغیر x وارد کن؛ نمونه: 2*x+3=11</p>
+    <label for="equationInput">معادله</label>
+    <input id="equationInput" type="text" dir="ltr"
+      placeholder="مثلاً 2*x+3=11" autocomplete="off">
+    <button onclick="solveEquation()">حل معادله</button>
+    <div id="equationResult" class="result" aria-live="polite"></div>
+    <p>در این نسخه، حل معادلات خطی و درجهٔ دوم در برنامه پیاده‌سازی می‌شود.</p>
+  </div>
+</section>
+
+<section class="page" id="geometry">
+  <div class="card">
+    <h2>📐 محاسبه‌گر هندسه</h2>
+    <label for="shapeType">نوع شکل</label>
+    <select id="shapeType" onchange="updateGeometryFields()">
+      <option value="rectangle">مستطیل</option>
+      <option value="square">مربع</option>
+      <option value="triangle">مثلث</option>
+      <option value="circle">دایره</option>
+      <option value="cube">مکعب</option>
+      <option value="box">مکعب‌مستطیل</option>
+      <option value="cylinder">استوانه</option>
+    </select>
+    <div id="geometryFields"></div>
+    <button onclick="calculateGeometry()">محاسبه</button>
+    <div id="geometryResult" class="result" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="page" id="pythagoras">
+  <div class="card">
+    <h2>📏 قضیهٔ فیثاغورس</h2>
+    <p>برای مثلث قائم‌الزاویه، دو ضلع قائم را وارد کن تا وتر محاسبه شود.</p>
+    <label for="pythA">ضلع اول (a)</label>
+    <input id="pythA" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 3">
+    <label for="pythB">ضلع دوم (b)</label>
+    <input id="pythB" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 4">
+    <button onclick="calculatePythagoras()">محاسبهٔ وتر</button>
+    <div id="pythResult" class="result" aria-live="polite"></div>
   </div>
 </section>
 
@@ -573,7 +621,7 @@ function factorize(){
  if(n===0){box.textContent='صفر تجزیهٔ یکتایی به عامل‌های اول ندارد.';tree.textContent='برای صفر درخت تجزیه تعریف نمی‌شود.';return}
  const abs=Math.abs(n);if(abs===1){box.textContent=n<0?'−۱ = −۱؛ عدد ۱ عامل اولی ندارد.':'عدد ۱ عامل اولی ندارد.';tree.textContent='درختی برای ۱ وجود ندارد؛ ۱ عدد اول نیست.';return}
  const factors=[];let x=abs;for(let d=2;d*d<=x;d+=(d===2?1:2)){while(x%d===0){factors.push(d);x/=d}}if(x>1)factors.push(x);
- const counts={};factors.forEach(f=>counts[f]=(counts[f]||0)+1);const formula=Object.entries(counts).map(([f,p])=>p===1?f:`${f}^${p}`).join(' × ');
+ const counts={};factors.forEach(f=>counts[f]=(counts[f]||0)+1);const superscripts={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};const formula=Object.entries(counts).map(([f,p])=>p===1?f:`${f}${String(p).split('').map(c=>superscripts[c]).join('')}`).join(' × ');
  box.textContent=`${n} = ${n<0?'−1 × ':''}${formula}`;
  const pillbox=document.createElement('div');factors.forEach(f=>{const span=document.createElement('span');span.className='pill';span.textContent=f;pillbox.append(span)});details.append('عامل‌های اول: ',pillbox);
  const info=document.createElement('p');info.textContent=`تعداد عامل‌های اول با تکرار: ${factors.length}؛ عامل‌های اول متمایز: ${Object.keys(counts).length}؛ تعداد مقسوم‌علیه‌های مثبت: ${Object.values(counts).reduce((a,p)=>a*(p+1),1)}`;details.append(info);
@@ -589,7 +637,101 @@ function factorize(){
  addHistory('تجزیهٔ عدد',`${n} = ${n<0?'−1 × ':''}${formula}`);
 }
 function isPrimeNumber(n){if(n<2)return false;for(let d=2;d*d<=n;d++)if(n%d===0)return false;return true}
+
+
+function updateGeometryFields(){
+ const type=$('shapeType').value,box=$('geometryFields');
+ const fields={
+  rectangle:[['gWidth','طول'],['gHeight','عرض']],
+  square:[['gSide','اندازهٔ ضلع']],
+  triangle:[['gBase','قاعده'],['gHeight','ارتفاع']],
+  circle:[['gRadius','شعاع']],
+  cube:[['gSide','اندازهٔ ضلع']],
+  box:[['gLength','طول'],['gWidth','عرض'],['gHeight','ارتفاع']],
+  cylinder:[['gRadius','شعاع'],['gHeight','ارتفاع']]
+ }[type];
+ box.replaceChildren();
+ fields.forEach(([id,label])=>{
+  const l=document.createElement('label');l.htmlFor=id;l.textContent=label;
+  const input=document.createElement('input');input.id=id;input.type='number';
+  input.min='0';input.step='any';input.inputMode='decimal';input.placeholder=label;
+  box.append(l,input);
+ });
+ $('geometryResult').textContent='';
+}
+function calculateGeometry(){
+ const type=$('shapeType').value,out=$('geometryResult');
+ const val=id=>Number($(id)?.value);
+ const positive=ids=>ids.every(id=>$(id)&&$(id).value.trim()!==''&&Number.isFinite(val(id))&&val(id)>0);
+ const fmt=n=>Number.isFinite(n)?Number(n.toPrecision(10)).toLocaleString('fa-IR'):'نامعتبر';
+ let a,b,h,r,area,perimeter,volume,lines=[];
+ let ids=[];
+ if(type==='rectangle')ids=['gWidth','gHeight'];
+ if(type==='square'||type==='cube')ids=['gSide'];
+ if(type==='triangle')ids=['gBase','gHeight'];
+ if(type==='circle')ids=['gRadius'];
+ if(type==='box')ids=['gLength','gWidth','gHeight'];
+ if(type==='cylinder')ids=['gRadius','gHeight'];
+ if(!positive(ids)){out.textContent='لطفاً همهٔ اندازه‌ها را به‌صورت عدد مثبت وارد کن.';return}
+ if(type==='rectangle'){
+  a=val('gWidth');b=val('gHeight');area=a*b;perimeter=2*(a+b);
+  lines=[`مساحت: ${fmt(area)}`,`محیط: ${fmt(perimeter)}`];
+ }else if(type==='square'){
+  a=val('gSide');lines=[`مساحت: ${fmt(a*a)}`,`محیط: ${fmt(4*a)}`];
+ }else if(type==='triangle'){
+  a=val('gBase');h=val('gHeight');
+  lines=[`مساحت: ${fmt(a*h/2)}`,
+   'محیط فقط با داشتن اندازهٔ هر سه ضلع محاسبه می‌شود.'];
+ }else if(type==='circle'){
+  r=val('gRadius');lines=[`مساحت: ${fmt(Math.PI*r*r)}`,`محیط دایره: ${fmt(2*Math.PI*r)}`];
+ }else if(type==='cube'){
+  a=val('gSide');lines=[`مساحت کل: ${fmt(6*a*a)}`,`حجم: ${fmt(a*a*a)}`];
+ }else if(type==='box'){
+  a=val('gLength');b=val('gWidth');h=val('gHeight');
+  lines=[`مساحت کل: ${fmt(2*(a*b+a*h+b*h))}`,`حجم: ${fmt(a*b*h)}`];
+ }else if(type==='cylinder'){
+  r=val('gRadius');h=val('gHeight');
+  lines=[`مساحت کل: ${fmt(2*Math.PI*r*(r+h))}`,`حجم: ${fmt(Math.PI*r*r*h)}`];
+ }
+ out.textContent=lines.join('\n');
+ if(typeof addHistory==='function')addHistory('محاسبهٔ هندسه',lines.join('؛ '));
+}
+function calculatePythagoras(){
+ const a=Number($('pythA').value),b=Number($('pythB').value),out=$('pythResult');
+ if(!$('pythA').value.trim()||!$('pythB').value.trim()||!Number.isFinite(a)||!Number.isFinite(b)||a<=0||b<=0){
+  out.textContent='هر دو ضلع را با عدد مثبت وارد کن.';return;
+ }
+ const c=Math.hypot(a,b),fmt=n=>Number(n.toPrecision(10)).toLocaleString('fa-IR');
+ out.textContent=`وتر: ${fmt(c)}\nمحاسبه: √(${fmt(a)}² + ${fmt(b)}²) = ${fmt(c)}`;
+ if(typeof addHistory==='function')addHistory('قضیهٔ فیثاغورس',`a=${a}، b=${b}، وتر=${c}`);
+}
+
+function solveEquation(){
+ const out=document.getElementById('equationResult');
+ const raw=document.getElementById('equationInput').value
+ .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/−/g,'-').replace(/×/g,'*').replace(/÷/g,'/');
+ const parts=raw.split('=');
+ if(parts.length!==2){out.textContent='معادله را با یک علامت = وارد کن.';return}
+ try{
+  const expr=`(${parts[0]})-(${parts[1]})`;
+  const f=x=>math.evaluate(expr,{x});
+  const c=f(0),p=f(1),m=f(-1),a=(p+m)/2-c,b=(p-m)/2;
+  const tol=1e-8;
+  for(const x of [2,-2,3])if(Math.abs(f(x)-(a*x*x+b*x+c))>tol)throw Error();
+  if(Math.abs(a)<tol){
+   if(Math.abs(b)<tol)out.textContent=Math.abs(c)<tol?'این تساوی برای همهٔ xها برقرار است.':'جواب حقیقی ندارد.';
+   else out.textContent='جواب: x = '+(-c/b);
+  }else{
+   const d=b*b-4*a*c;
+   if(d < -tol)out.textContent='جواب حقیقی ندارد.';
+   else if(Math.abs(d)<=tol)out.textContent='جواب مضاعف: x = '+(-b/(2*a));
+   else out.textContent='جواب اول: x₁ = '+((-b+Math.sqrt(d))/(2*a))+'\nجواب دوم: x₂ = '+((-b-Math.sqrt(d))/(2*a));
+  }
+ }catch(e){out.textContent='این معادله پشتیبانی نمی‌شود؛ نمونه: 2*x+3=11'}
+}
+
 loadSettings();page('home');renderHistory();runSieve();factorize();
+updateGeometryFields();
 
 const numberPadStyle=document.createElement('style');
 numberPadStyle.textContent=`
